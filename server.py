@@ -12,14 +12,16 @@ groups = []
 # classes
 class Message:
     def __init__(self):
-        self.id = 0
-        self.subject = -1
+        self.id = -1
+        self.subject = ""
         self.message = ""
 
 class Group:
     def __init__(self, name):
         self.name = name
         self.users = []
+        self.messages = []
+        
 
 class User:
     def __init__(self, conn, addr):
