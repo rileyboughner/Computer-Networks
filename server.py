@@ -6,11 +6,16 @@ import json
 
 # variuables
 HOST = "0.0.0.0"
-PORT = 5000
 users = []
 groups = []
 
 # classes
+class Message:
+    def __init__(self):
+        self.id = 0
+        self.subject = -1
+        self.message = ""
+
 class Group:
     def __init__(self, name):
         self.name = name
@@ -92,11 +97,6 @@ def handle_client(user):
     users.remove(newUser)
 
     remove_from_group(newUser.username, newUser.groupid)
-
-    # for group in groups:
-    #     print("username: " + str(newUser.username))
-    #     if newUser.username in group.users:
-    #         group.users.remove(newUser.username)
 
     createDisplay()
 
