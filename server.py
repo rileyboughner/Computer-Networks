@@ -11,10 +11,9 @@ groups = []
 
 # classes
 class Message:
-    def __init__(self):
-        self.id = -1
-        self.subject = ""
-        self.message = ""
+    def __init__(self, subject, message):
+        self.subject = subject
+        self.message = message
 
 class Group:
     def __init__(self, name):
@@ -50,6 +49,9 @@ def debug(user, args):
         print(user.group)
         print()
 
+def add_message_to_group(message, group):
+    pass
+
 def remove_from_group(username, groupid):
     groups[groupid].users.remove(username)
 
@@ -61,8 +63,10 @@ def join(user, args):
     user.groupid = 0
 
 def post(user, args):
-    print(user)
-    print(args)
+    message = Message()
+    add_message_to_group(message, group)
+
+    # notify everyone of the new message?
 
 def users_command(user, args):
     user.conn.sendall(json.dumps(groups[user.groupid].users).encode())
