@@ -6,6 +6,7 @@ import json
 
 # variuables
 HOST = "0.0.0.0"
+PORT = 5000
 users = []
 groups = []
 
@@ -49,24 +50,26 @@ def debug(user, args):
         print(user.group)
         print()
 
-def add_message_to_group(message, group):
-    pass
+def setUsername(user, args):
+    user.username = args["username"]
+
+def add_message_to_group(message, groupid):
+    groups[groupid].messages.append(message)
 
 def remove_from_group(username, groupid):
     groups[groupid].users.remove(username)
 
 def join(user, args):
-    user.username = args["username"]
 
-    groups[0].users.append(args["username"])
+    #validate that user is not already in group
+
+    groups[0].users.append(user.username)
     user.group = groups[0].name
     user.groupid = 0
 
 def post(user, args):
-    message = Message()
-    add_message_to_group(message, group)
-
-    # notify everyone of the new message?
+    message = Message(args["subject"], args["message"])
+    add_message_to_group(message, user.groupid)
 
 def users_command(user, args):
     user.conn.sendall(json.dumps(groups[user.groupid].users).encode())
@@ -115,7 +118,7 @@ def clear():
         os.system('clear')
 
 def createDisplay():
-    #clear()
+    clear()
     print("users online: " + str(len(users)))
     print()
     for group in groups:
@@ -127,6 +130,7 @@ def createDisplay():
 # commands
 commands = {
         "debug": debug,
+        "setUsername": setUsername,
         "join": join,
         "post": post,
         "users_command": users_command,
