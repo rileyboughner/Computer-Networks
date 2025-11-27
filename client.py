@@ -2,12 +2,18 @@
 import socket
 import json
 import os
+import threading
 
 # variuables
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 isConnected = False
 hasGroup = False
 username = ""
+messageLength = 5 #this controls how many messages to show at the top of the screen
+
+users = []
+subjects = []
+messages = []
 
 # functions
 def clear():
@@ -19,20 +25,56 @@ def clear():
         os.system('clear')
 
 def get_messages(number):
-    for i in range(number):
-        print("Placeholder message")
+    client.sendall(json.dumps({"command": "getMessages", "number":number}).encode())
 
-def display_messages():
+def handle_server():
+    global users
+    global subjects
+    global messages
+
+    while True:
+        try:
+            response = client.recv(1024).decode().strip()
+            response = json.loads(response)
+
+            if not response:
+                print("Server disconnected.")
+                break
+
+            if "users" in response:
+                users = response["users"]
+
+            if "subjects" in response:
+                subjects = response["subjects"]
+
+            if "messages" in response:
+                messages = response["messages"]    
+
+            updateDisplay()
+        except Exception as e:
+            print("Listener error:", e)
+            break
+
+def updateDisplay():
+    clear()
+    print(messages)
+
     if hasGroup:
-        get_messages(2)
-        print()
-    
+        count = min(len(subjects), len(messages))
+        start = max(0, count - messageLength)
+
+        for i in range(start, count):
+            print(f"[{subjects[i]}] {messages[i]}")
+
 def debug(args):
     if not isConnected: 
         isNotConnectedHelper()
         return
 
     client.sendall(json.dumps({"command": "debug"}).encode())
+
+def alreadyHasGroupHelper():
+    print("please connect to the server firsta using the connect command")
 
 def isNotConnectedHelper():
     print("please connect to the server first using the connect command")
@@ -46,6 +88,9 @@ def connect(args):
     client.connect((HOST, PORT))
     isConnected = True
 
+    listener_thread = threading.Thread(target=handle_server, daemon=True)
+    listener_thread.start()
+
     username = input("username>")
     
     client.sendall(json.dumps({"command": "setUsername", "username": username}).encode())
@@ -57,12 +102,20 @@ def join(args):
         isNotConnectedHelper()
         return
 
+    if hasGroup:
+        alreadyHasGroupHelper()
+        return
+
     client.sendall(json.dumps({"command": "join"}).encode())
     hasGroup = True
 
 def post(args):
     if not isConnected: 
         isNotConnectedHelper()
+        return
+
+    if not hasGroup: 
+        alreadyHasGroupHelper()
         return
 
     subject = input("subject>")
@@ -72,22 +125,22 @@ def post(args):
     client.sendall(json.dumps({"command": "post", "subject": subject, "message": message}).encode())
 
 def users_command(args):
-
-    if not isConnected: 
-        isNotConnectedHelper()
-        return
-
-    client.sendall(json.dumps({"command": "users_command"}).encode())
-    response = client.recv(1024).decode().strip()
-
-    try:
-        users = json.loads(response)
-        print("users:")
-        for user in users:
-            print(user)
-
-    except json.JSONDecodeError:
-        print(f"[{addr}] Received invalid JSON: {message}")
+    pass
+    # if not isConnected: 
+    #     isNotConnectedHelper()
+    #     return
+    #
+    # client.sendall(json.dumps({"command": "users_command"}).encode())
+    # response = client.recv(1024).decode().strip()
+    #
+    # try:
+    #     users = json.loads(response)
+    #     print("users:")
+    #     for user in users:
+    #         print(user)
+    #
+    # except json.JSONDecodeError:
+    #     print(f"[{addr}] Received invalid JSON: {message}")
 
 def leave(args):
     global hasGroup
@@ -144,11 +197,9 @@ commands = {
 # main loop
 if __name__ == "__main__":
     while True:
-        clear()
+        updateDisplay()
 
-        display_messages()
-
-        userInput = input(str(hasGroup) + ">")
+        userInput = input(username + ">")
         userInput = userInput.split()
         command = userInput[0]
         
