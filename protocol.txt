@@ -1,0 +1,57 @@
+[MAGIC NUMBER]
+0xF00DBEEF
+
+[LENGTH - 2 BYTES]
+Length of entire message in bytes, excluding the magic number and the length.
+
+[OPCODE - 1 BYTE]
+0x1 = JOIN
+0x2 = POST
+0x3 = USERS
+0x4 = LEAVE
+0x5 = MESSAGE
+0x6 = EXIT
+0xFF = ERROR
+
+[DATA - VARIABLE LENGTH]
+
+Each string segment of data will be preceded by 2 bytes to specify the length of the data
+
+[---CLIENT -> SERVER---]
+[-JOIN-]
+[=-USERNAME-= (string)]
+
+[-POST-]
+[=-SUBJECT-= (string)]
+[=-BODY-= (string)]
+
+[-USERS-]
+
+[-LEAVE-]
+
+[-MESSAGE-]
+[=-ID-= (string)]
+
+[-EXIT-]
+
+[---SERVER -> CLIENT---]
+[-JOIN-]
+[=-USERNAME-= (string)]
+
+[-POST-]
+[=-ID-= (string)]
+[=-SENDER-= (string)]
+[=-DATE-= (string)]
+[=-SUBJECT-= (string)]
+
+[-USERS-]
+[=-NUM_USERS-= (int)]
+[=-USERNAMES-= (string[])]
+
+[-LEAVE-]
+[=-USERNAME-= (string)]
+
+[-MESSAGE-]
+[=-BODY-= (string)]
+
+[-EXIT-]
