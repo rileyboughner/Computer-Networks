@@ -20,13 +20,28 @@ A simple command-line bulletin board system that allows users to communicate in 
 
 ## Server
 
-The server listens for incoming connections on a specified port.
+There are two server implementations available: Python and C++.
+
+### Python Server
+
+The Python server listens for incoming connections on a specified port.
 
 ```bash
 python3 server.py
 ```
 
 The server will start on port 5000 by default. If the port is in use, it will automatically increment to the next available port.
+
+### C++ Server
+
+To compile and run the C++ server:
+
+```bash
+g++ server.cpp -o server
+./server
+```
+
+The C++ server will start on port 5000 by default.
 
 ## Client
 
@@ -60,14 +75,19 @@ All communication between the client and server is done over TCP sockets using a
 
 ## Message Structure
 
-All messages follow this structure:
+All messages are composed of a header and a data payload.
 
-| Field         | Size (bytes) | Description                                                  |
-|---------------|--------------|--------------------------------------------------------------|
-| Magic Number  | 4            | `0xF00DBEEF`                                                 |
-| Length        | 2            | Length of the entire message, excluding the magic number and length field. |
-| Opcode        | 1            | The operation code for the message.                          |
-| Data          | Variable     | The message payload.                                         |
+### Header
+
+| Field         | Size (bytes) | Value        | Description                                                  |
+|---------------|--------------|--------------|--------------------------------------------------------------|
+| Magic Number  | 4            | `0xF00DBEEF` | A constant value to identify the start of a message.         |
+| Length        | 2            |              | The length of the message payload in bytes.                  |
+| Opcode        | 1            |              | The operation code for the message.                          |
+
+### Data Payload
+
+The data payload is a variable-length sequence of bytes that contains the message data. The structure of the data payload is determined by the opcode.
 
 ## Opcodes
 
@@ -92,4 +112,5 @@ The following opcodes are supported:
 # Requirements
 
 - Python 3.6+
+- g++ (for the C++ server)
 - No external libraries are required.
