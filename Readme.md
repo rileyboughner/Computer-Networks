@@ -1,6 +1,6 @@
 Project 2 - Simple Bulletin Board System
 
-Team Members:
+# Team Members:
 
 
 
@@ -14,21 +14,25 @@ Ethan Chaplin
 
 
 
-How to Run
+# How to Run
 
 Start Server
 
-bashpython server.py
+```
+server.py
+```
 
 Server listens on port 5000 (auto-increments if unavailable).
 
 Start Client
 
-bashpython client.py
+```
+client.py
+```
 
 
 
-Commands
+# Commands
 
 
 
@@ -44,11 +48,11 @@ exit - Disconnect and quit
 
 
 
-Part 2 commands (not implemented): groups, groupjoin, grouppost, groupusers, groupleave, groupmessage
+# Part 2 commands (not implemented): groups, groupjoin, grouppost, groupusers, groupleave, groupmessage
 
 
 
-Protocol
+# Protocol
 
 All communication uses JSON format over TCP sockets.
 
@@ -62,11 +66,12 @@ json{"status": "message", "subjects": \[...], "messages": \[...]}
 
 
 
-Requirements
+# Requirements
 
 
 
 Python 3.6+
 
 No external libraries needed (uses standard library only)
+
 
