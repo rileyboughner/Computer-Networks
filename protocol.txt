@@ -6,11 +6,17 @@ Length of entire message in bytes, excluding the magic number and the length.
 
 [OPCODE - 1 BYTE]
 0x1 = JOIN
+0xA1 = GROUP_JOIN
 0x2 = POST
+0xA2 = GROUP_POST
 0x3 = USERS
+0xA3 = GROUP_USERS
 0x4 = LEAVE
+0xA4 = GROUP_LEAVE
 0x5 = MESSAGE
+0xA5 = GROUP_MESSAGE
 0x6 = EXIT
+0x7 = GROUPS
 0xFF = ERROR
 
 [DATA - VARIABLE LENGTH]
@@ -21,16 +27,35 @@ Each string segment of data will be preceded by 2 bytes to specify the length of
 [-JOIN-]
 [=-USERNAME-= (string)]
 
+[-GROUP_JOIN-]
+[=-GROUP_ID-= (string)]
+[=-USERNAME-= (string)]
+
 [-POST-]
+[=-SUBJECT-= (string)]
+[=-BODY-= (string)]
+
+[-GROUP_POST-]
+[=-GROUP_ID-= (string)]
 [=-SUBJECT-= (string)]
 [=-BODY-= (string)]
 
 [-USERS-]
 
+[-GROUP_USERS-]
+[=-GROUP_ID-= (string)]
+
 [-LEAVE-]
+
+[-GROUP_LEAVE-]
+[=-GROUP_ID-= (string)]
 
 [-MESSAGE-]
 [=-ID-= (string)]
+
+[-GROUP_MESSAGE-]
+[=-GROUP_ID-= (string)]
+[=-MESSAGE_ID-= (string)]
 
 [-EXIT-]
 
@@ -38,20 +63,51 @@ Each string segment of data will be preceded by 2 bytes to specify the length of
 [-JOIN-]
 [=-USERNAME-= (string)]
 
+[-GROUP_JOIN-]
+[=-USERNAME-= (string)]
+[=-GROUP_ID-= (string)]
+[=-GROUP_NAME-= (string)]
+
 [-POST-]
 [=-ID-= (string)]
 [=-SENDER-= (string)]
 [=-DATE-= (string)]
 [=-SUBJECT-= (string)]
 
+[-GROUP_POST-]
+[=-ID-= (string)]
+[=-SENDER-= (string)]
+[=-DATE-= (string)]
+[=-SUBJECT-= (string)]
+[=-GROUP_ID-= (string)]
+[=-GROUP_NAME-= (string)]
+
 [-USERS-]
 [=-NUM_USERS-= (int)]
 [=-USERNAMES-= (string[])]
 
+[-GROUP_USERS-]
+[=-NUM_USERS-= (int)]
+[=-USERNAMES-= (string[])]
+[=-GROUP_ID-= (string)]
+[=-GROUP_NAME-= (string)]
+
 [-LEAVE-]
 [=-USERNAME-= (string)]
 
+[-GROUP_LEAVE-]
+[=-USERNAME-= (string)]
+[=-GROUP_ID-= (string)]
+[=-GROUP_NAME-= (string)]
+
 [-MESSAGE-]
 [=-BODY-= (string)]
+
+[-GROUPS-]
+[=-NUM_GROUPS-= (int)]
+{
+[=-GROUP_ID-= (string)]
+[=-GROUP_NAME-= (string)]
+} for each group
 
 [-EXIT-]
