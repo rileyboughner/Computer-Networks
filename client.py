@@ -398,6 +398,23 @@ def parse_command(command: str):
         group_leave(group_id)
         with print_lock:
             print("\n> ", end='', flush=True)
+    elif cmd == 'help':
+        with print_lock:
+            print("\nAvailable commands:\n\t", end='', flush=True)
+            print("connect <ip> <port>: Connects to a server on the given ip address and port\n\t", end='', flush=True)
+            print("exit: Leave all groups and quit program\n\t", end='', flush=True)
+            print("groupjoin <group_id> <username>: Joins a private group with a given username\n\t", end='', flush=True)
+            print("groupleave <group_id>: Leaves a private group\n\t", end='', flush=True)
+            print("groupmessage <group_id> <message_id>: View a message from a private group\n\t", end='', flush=True)
+            print("grouppost <group_id< <subject> <body>: Posts to a private group\n\t", end='', flush=True)
+            print("groups: Lists all available groups to join\n\t", end='', flush=True)
+            print("groupusers <group_id>: List users of a private group \n\t", end='', flush=True)
+            print("help: View commands\n\t", end='', flush=True)
+            print("join <username>: Joins the public group with a given username\n\t", end='', flush=True)
+            print("leave: Leaves the public group\n\t", end='', flush=True)
+            print("message <message_id>: View a message from the public group\n\t", end='', flush=True)
+            print("post <subject> <body>: Posts to the public group\n\t", end='', flush=True)
+            print("users: List users of the public group\n> ", end='', flush=True)
     else:
         with print_lock:
             print("\nUnknown command.\n> ", end='', flush=True)
