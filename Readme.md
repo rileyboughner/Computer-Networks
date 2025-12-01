@@ -44,13 +44,7 @@ post - Post a message (prompts for subject and message)
 
 leave - Leave current group
 
-exit - Disconnect and quit
-
-
-
-# Part 2 commands (not implemented): groups, groupjoin, grouppost, groupusers, groupleave, groupmessage
-
-
+exit - Disconnect and quit=
 
 # Protocol
 
@@ -73,5 +67,6 @@ json{"status": "message", "subjects": \[...], "messages": \[...]}
 Python 3.6+
 
 No external libraries needed (uses standard library only)
+
 
 
