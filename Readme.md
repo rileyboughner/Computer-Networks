@@ -20,17 +20,7 @@ A simple command-line bulletin board system that allows users to communicate in 
 
 ## Server
 
-There are two server implementations available: Python and C++.
-
-### Python Server
-
-The Python server listens for incoming connections on a specified port.
-
-```bash
-python3 server.py
-```
-
-The server will start on port 5000 by default. If the port is in use, it will automatically increment to the next available port.
+To qualify for extra credit, the client is written in Python and the server in C++.
 
 ### C++ Server
 
@@ -41,14 +31,14 @@ g++ server.cpp -o server
 ./server
 ```
 
-The C++ server will start on port 5000 by default.
+The server will start on port 8083 by default.
 
 ## Client
 
-The client connects to the server and allows users to send commands.
+The client connects to the server and allows users to send commands. Requires Python 3.14! Earlier Python versions may contain syntax errors!
 
 ```bash
-python3 client.py
+python3.14 client.py
 ```
 
 # Commands
@@ -93,24 +83,24 @@ The data payload is a variable-length sequence of bytes that contains the messag
 
 The following opcodes are supported:
 
-| Opcode | Name           | Description                               |
-|--------|----------------|-------------------------------------------|
-| 0x01   | JOIN           | Join the main public group.               |
-| 0xA1   | GROUP_JOIN     | Join a private group.                     |
-| 0x02   | POST           | Post a message to the main public group.  |
-| 0xA2   | GROUP_POST     | Post a message to a private group.        |
-| 0x03   | USERS          | Get a list of users in the main public group. |
-| 0xA3   | GROUP_USERS    | Get a list of users in a private group.   |
-| 0x04   | LEAVE          | Leave the main public group.              |
-| 0xA4   | GROUP_LEAVE    | Leave a private group.                    |
-| 0x05   | MESSAGE        | Get a message from the main public group. |
-| 0xA5   | GROUP_MESSAGE  | Get a message from a private group.       |
-| 0x06   | EXIT           | Disconnect from the server.               |
-| 0x07   | GROUPS         | Get a list of all available groups.       |
-| 0xFF   | ERROR          | An error occurred.                        |
+| Opcode | Name           | Description                                     |
+|--------|----------------|-------------------------------------------------|
+| 0x01   | JOIN           | Join the main public group.                     |
+| 0xA1   | GROUP_JOIN     | Join a private group.                           |
+| 0x02   | POST           | Post a message to the main public group.        |
+| 0xA2   | GROUP_POST     | Post a message to a private group.              |
+| 0x03   | USERS          | Get a list of users in the main public group.   |
+| 0xA3   | GROUP_USERS    | Get a list of users in a private group.         |
+| 0x04   | LEAVE          | Leave the main public group.                    |
+| 0xA4   | GROUP_LEAVE    | Leave a private group.                          |
+| 0x05   | MESSAGE        | Get a message from the main public group.       |
+| 0xA5   | GROUP_MESSAGE  | Get a message from a private group.             |
+| 0x06   | EXIT           | Disconnect from the server.                     |
+| 0x07   | GROUPS         | Get a list of all available groups.             |
+| 0xFF   | ERROR          | An error occurred.                              |
 
 # Requirements
 
-- Python 3.6+
+- Python 3.14+
 - g++ (for the C++ server)
 - No external libraries are required.

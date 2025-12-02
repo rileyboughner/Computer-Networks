@@ -106,8 +106,8 @@ Each string segment of data will be preceded by 2 bytes to specify the length of
 [-GROUPS-]
 [=-NUM_GROUPS-= (int)]
 {
-[=-GROUP_ID-= (string)]
-[=-GROUP_NAME-= (string)]
+    [=-GROUP_ID-= (string)]
+    [=-GROUP_NAME-= (string)]
 } for each group
 
 [-EXIT-]
