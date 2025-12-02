@@ -90,7 +90,7 @@ def message_command(id: str):
     send_message(body)
 
 def group_message_command(group_id: str, msg_id: str):
-    body = bytes([MESSAGE])
+    body = bytes([GROUP_MESSAGE])
     group_bytes = group_id.encode('utf-8')
     body += len(group_bytes).to_bytes(2, 'little') + group_bytes
     id_bytes = msg_id.encode('utf-8')
@@ -375,6 +375,10 @@ def parse_command(command: str):
         message = tokens[3]
         group_post(group_id, subject, message)
     elif cmd == 'groupusers':
+        if not active_connection:
+            with print_lock:
+                print("\nNot connected to any server. Use 'connect <ip> <port>' first.\n> ", end='', flush=True)
+            return
         if len(tokens) != 2:
             with print_lock:
                 print("\nUsage: groupjoin <group_id>\n> ", end='', flush=True)
@@ -382,17 +386,25 @@ def parse_command(command: str):
         group_id = tokens[1]
         group_users(group_id)
     elif cmd == 'groupmessage':
+        if not active_connection:
+            with print_lock:
+                print("\nNot connected to any server. Use 'connect <ip> <port>' first.\n> ", end='', flush=True)
+            return
         if len(tokens) != 3:
             with print_lock:
-                print("\nUsage: groupjoin <group_id>\n> ", end='', flush=True)
+                print("\nUsage: groupmessage <group_id> <msg_id>\n> ", end='', flush=True)
             return
         group_id = tokens[1]
         message_id = tokens[2]
         group_message_command(group_id, message_id)
     elif cmd == 'groupleave':
+        if not active_connection:
+            with print_lock:
+                print("\nNot connected to any server. Use 'connect <ip> <port>' first.\n> ", end='', flush=True)
+            return
         if len(tokens) != 2:
             with print_lock:
-                print("\nUsage: groupjoin <group_id>\n> ", end='', flush=True)
+                print("\nUsage: groupleave <group_id>\n> ", end='', flush=True)
             return
         group_id = tokens[1]
         group_leave(group_id)

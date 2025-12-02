@@ -63,6 +63,13 @@ void broadcastMessage(const std::vector<unsigned char>& message) {
     }
 }
 
+void broadcastGroupMessage(std::string group_id, const std::vector<unsigned char>& message) {
+    std::lock_guard<std::mutex> lock(messages_mutex);
+    for (const auto& client : groups[group_id]->clients) {
+        send(client.first, reinterpret_cast<const char*>(message.data()), message.size(), 0);
+    }
+}
+
 static const std::array<unsigned char, 4> MAGIC = {0xF0, 0x0D, 0xBE, 0xEF};
 
 static inline void push_uint16_le(std::vector<unsigned char>& out, uint16_t value) {
@@ -237,7 +244,7 @@ int parseMessage(char* message, int sock) {
                 return 0;
             }
         }
-        broadcastMessage(prepareGroupJoinResponse(username, group_id, groups[group_id]->longName));
+        broadcastGroupMessage(group_id, prepareGroupJoinResponse(username, group_id, groups[group_id]->longName));
         {
             std::lock_guard<std::mutex> lock(messages_mutex);
             groups[group_id]->clients[sock] = username;
@@ -251,6 +258,11 @@ int parseMessage(char* message, int sock) {
         }
     }
     else if (op_code == OP_POST) {
+        if (publicGroup.clients.find(sock) == publicGroup.clients.end()) {
+            std::vector<unsigned char> response = prepareErrorResponse("Not a member of the public group.");
+            send(sock, reinterpret_cast<const char*>(response.data()), response.size(), 0);
+            return 0;
+        }
         std::string subject;
         std::string body;
         uint16_t subject_length = (static_cast<unsigned char>(message[8]) << 8) | static_cast<unsigned char>(message[7]);
@@ -300,9 +312,14 @@ int parseMessage(char* message, int sock) {
             groups[group_id]->messages[messageId] = newMessage;
             groups[group_id]->messageOrder.push_back(messageId);
         }
-        broadcastMessage(prepareGroupPostResponse(messageId, newMessage.sender, newMessage.date, newMessage.subject, group_id, groups[group_id]->longName));
+        broadcastGroupMessage(group_id, prepareGroupPostResponse(messageId, newMessage.sender, newMessage.date, newMessage.subject, group_id, groups[group_id]->longName));
     }
     else if (op_code == OP_USERS) {
+        if (publicGroup.clients.find(sock) == publicGroup.clients.end()) {
+            std::vector<unsigned char> response = prepareErrorResponse("Not a member of the public group.");
+            send(sock, reinterpret_cast<const char*>(response.data()), response.size(), 0);
+            return 0;
+        }
         std::vector<std::string> usernames;
         {
             std::lock_guard<std::mutex> lock(messages_mutex);
@@ -337,6 +354,11 @@ int parseMessage(char* message, int sock) {
         send(sock, reinterpret_cast<const char*>(response.data()), response.size(), 0);
     }
     else if (op_code == OP_LEAVE) {
+        if (publicGroup.clients.find(sock) == publicGroup.clients.end()) {
+            std::vector<unsigned char> response = prepareErrorResponse("Not a member of the public group.");
+            send(sock, reinterpret_cast<const char*>(response.data()), response.size(), 0);
+            return 0;
+        }
         std::string username = publicGroup.clients[sock];
         {
             std::lock_guard<std::mutex> lock(messages_mutex);
@@ -362,7 +384,7 @@ int parseMessage(char* message, int sock) {
             std::lock_guard<std::mutex> lock(messages_mutex);
             groups[group_id]->clients.erase(sock);
         }
-        broadcastMessage(prepareGroupLeaveResponse(username, group_id, groups[group_id]->longName));
+        broadcastGroupMessage(group_id, prepareGroupLeaveResponse(username, group_id, groups[group_id]->longName));
     }
     else if (op_code == OP_MESSAGE) {
         uint16_t id_length = (static_cast<unsigned char>(message[8]) << 8) | static_cast<unsigned char>(message[7]);
@@ -429,7 +451,7 @@ int parseMessage(char* message, int sock) {
                     std::lock_guard<std::mutex> lock(messages_mutex);
                     group->clients.erase(sock);
                 }
-                broadcastMessage(prepareGroupLeaveResponse(username, group->id, groups[group->id]->longName));
+                broadcastGroupMessage(group->id, prepareGroupLeaveResponse(username, group->id, groups[group->id]->longName));
             }
         }
         close(sock);
